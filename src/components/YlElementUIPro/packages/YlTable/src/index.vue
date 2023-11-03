@@ -57,7 +57,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from "vue";
 import { Delete, Edit, View } from "@element-plus/icons-vue";
 defineProps({
   tableData: {

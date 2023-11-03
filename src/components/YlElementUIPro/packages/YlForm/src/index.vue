@@ -272,8 +272,6 @@ import {
   toRefs,
   watch,
   props,
-  defineProps,
-  defineEmits,
 } from "vue";
 const props = defineProps({
   rowGutter: {
