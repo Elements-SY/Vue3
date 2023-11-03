@@ -263,194 +263,211 @@
   </div>
 </template>
 <script setup lang="ts">
-import Mock from "../../../src/utils/mock.js"
+import Mock from "../../../src/utils/mock.js";
 import { deepClone, debounce } from "../../../src/utils/index.js";
-import { onMounted, reactive, ref, toRefs, watch, props, defineProps, defineEmits } from 'vue';
- const props = defineProps({
-    rowGutter: {
-      default: 24,
-    },
-    rowType: {
-      default: "",
-    },
-    rowJustify: {
-      type: String,
-      default: "",
-    },
-    rowAlign: {
-      type: String,
-      default: "",
-    },
-    rowTag: {
-      type: String,
-      default: "div",
-    },
-    // 由inline属性决定form表单是普通表单，还是行内表单
-    inline: {
-      default: true,
-    },
-    searchLoading: {
-      type: Boolean,
-      default: false,
-    },
-    hiddenFormBtn: {
-      //是否展示搜索按钮
-      type: Boolean,
-      default: false,
-    },
-    formWidth: {
-      //form表单宽度
-      type: String,
-      default: "auto",
-    },
-    position: {
-      type: String,
-      default: "",
-    },
-    formConfig: {
-      default: [],
-    },
-    formParams: {
-      default: {} || [],
-    },
-    // 用于控制该表单内组件的尺寸 medium / small / mini
-    size: {
-      type: String,
-      default: "small",
-    },
-    marginBottom: {
-      type: Number,
-      default: 0,
-    },
-    view: {
-      type: Boolean,
-      default: false,
-    },
-    formBtn: {
-      type: String,
-      default: "查询",
-    },
-    btnLoading: {
-      type: Boolean,
-      default: false,
-    },
-    loading: {
-      //加载
-      type: Boolean,
-      default: false,
-    },
-    isBtnSave: {
-      type: Boolean,
-      default: false,
-    }
-  })
-  const ruleFormRef = ref(null)
-  const state = reactive({
-      show: true,
-      tempFormParams: {},
-      tempFormConfig: [],
-      fetchResult: [],
-      timeout: null,
-      searchMark: {}, // 搜索
-  })
-  const emit = defineEmits([]);
-    // input事件绑定和注册
-   function inputEvent(e: {}, item: { trigger: string; }) {
-      console.log(e)
-      console.log(item)
-      console.log(item.trigger)
-      console.log(state.tempFormParams)
-      emit([item.trigger, state.tempFormParams]);
-    }
-    // 回车事件
-    function toEnterSearch() {
-      emit("keyup", state.tempFormParams);
-    }
-    // selectSearch 聚焦获取当前input绑定的数据
-    function focusKey(item: {}) {
-      state.searchMark = item;
-    }
-    // selectSearch 下拉选中获取当前input绑定的数据
-    function selectSearch(item: {}) {
-      console.log(item);
-    }
-    // 远程搜索查询
-    function querySearchAsync(queryString: any, cb: Function) {
-      console.log(queryString);
-      // let result = state.formConfig.filter((item) => {
-      //   if (item.hasOwnProperty("http")) {
-      //     if (item.prop === state.searchMark.prop) {
-      //       return item;
-      //     }
-      //   }
-      // });
-      // // 在搜索关键词不为空时发送http请求
-      // if (queryString) {
-      //   if (queryString.split(" ").length > 0) {
-      //     if (result[0].http.method == "post") {
-      //       result[0].http.data[result[0].prop] = queryString.split(" ")[0];
-      //     } else {
-      //       result[0].http.params[result[0].prop] = queryString.split(" ")[0];
-      //     }
-      //   }
-      //   request(result[0].http).then((res) => {
-      //     if (res.code == 200) {
-      //       if (res.data.list.length) {
-      //         res.data.list.map((item) => {
-      //           item.value = `${item[result[0].prop]}  ${item[result[0].name]}`;
-      //         });
-      //         state.fetchResult = res.data.list;
-      //         var results = queryString.split(" ")[0]
-      //           ? state.fetchResult.filter(
-      //               state.createStateFilter(queryString.split(" ")[0])
-      //             )
-      //           : state.fetchResult;
-      //         clearTimeout(state.timeout);
-      //         state.timeout = setTimeout(() => {
-      //           cb(results);
-      //         }, 1500 * Math.random());
-      //       }
-      //     }
-      //   });
-      // }
-    }
-    // 远程搜索匹配查询
-    function createStateFilter(queryString: string) {
-      return (res: { [x: string]: string; }) => {
-        return (
-          res[state.searchMark.prop]
-            .toLowerCase()
-            .indexOf(queryString.toLowerCase()) === 0
-        );
-      };
-    }
+import {
+  onMounted,
+  reactive,
+  ref,
+  toRefs,
+  watch,
+  props,
+  defineProps,
+  defineEmits,
+} from "vue";
+const props = defineProps({
+  rowGutter: {
+    default: 24,
+  },
+  rowType: {
+    default: "",
+  },
+  rowJustify: {
+    type: String,
+    default: "",
+  },
+  rowAlign: {
+    type: String,
+    default: "",
+  },
+  rowTag: {
+    type: String,
+    default: "div",
+  },
+  // 由inline属性决定form表单是普通表单，还是行内表单
+  inline: {
+    default: true,
+  },
+  searchLoading: {
+    type: Boolean,
+    default: false,
+  },
+  hiddenFormBtn: {
+    //是否展示搜索按钮
+    type: Boolean,
+    default: false,
+  },
+  formWidth: {
+    //form表单宽度
+    type: String,
+    default: "auto",
+  },
+  position: {
+    type: String,
+    default: "",
+  },
+  formConfig: {
+    default: [],
+  },
+  formParams: {
+    default: {} || [],
+  },
+  // 用于控制该表单内组件的尺寸 medium / small / mini
+  size: {
+    type: String,
+    default: "small",
+  },
+  marginBottom: {
+    type: Number,
+    default: 0,
+  },
+  view: {
+    type: Boolean,
+    default: false,
+  },
+  formBtn: {
+    type: String,
+    default: "查询",
+  },
+  btnLoading: {
+    type: Boolean,
+    default: false,
+  },
+  loading: {
+    //加载
+    type: Boolean,
+    default: false,
+  },
+  isBtnSave: {
+    type: Boolean,
+    default: false,
+  },
+});
+const ruleFormRef = ref(null);
+const state = reactive({
+  show: true,
+  tempFormParams: {},
+  tempFormConfig: [],
+  fetchResult: [],
+  timeout: null,
+  searchMark: {}, // 搜索
+});
+const emit = defineEmits([]);
+// input事件绑定和注册
+function inputEvent(e: {}, item: { trigger: string }) {
+  console.log(e);
+  console.log(item);
+  console.log(item.trigger);
+  console.log(state.tempFormParams);
+  emit([item.trigger, state.tempFormParams]);
+}
+// 回车事件
+function toEnterSearch() {
+  emit("keyup", state.tempFormParams);
+}
+// selectSearch 聚焦获取当前input绑定的数据
+function focusKey(item: {}) {
+  state.searchMark = item;
+}
+// selectSearch 下拉选中获取当前input绑定的数据
+function selectSearch(item: {}) {
+  console.log(item);
+}
+// 远程搜索查询
+function querySearchAsync(queryString: any, cb: Function) {
+  console.log(queryString);
+  // let result = state.formConfig.filter((item) => {
+  //   if (item.hasOwnProperty("http")) {
+  //     if (item.prop === state.searchMark.prop) {
+  //       return item;
+  //     }
+  //   }
+  // });
+  // // 在搜索关键词不为空时发送http请求
+  // if (queryString) {
+  //   if (queryString.split(" ").length > 0) {
+  //     if (result[0].http.method == "post") {
+  //       result[0].http.data[result[0].prop] = queryString.split(" ")[0];
+  //     } else {
+  //       result[0].http.params[result[0].prop] = queryString.split(" ")[0];
+  //     }
+  //   }
+  //   request(result[0].http).then((res) => {
+  //     if (res.code == 200) {
+  //       if (res.data.list.length) {
+  //         res.data.list.map((item) => {
+  //           item.value = `${item[result[0].prop]}  ${item[result[0].name]}`;
+  //         });
+  //         state.fetchResult = res.data.list;
+  //         var results = queryString.split(" ")[0]
+  //           ? state.fetchResult.filter(
+  //               state.createStateFilter(queryString.split(" ")[0])
+  //             )
+  //           : state.fetchResult;
+  //         clearTimeout(state.timeout);
+  //         state.timeout = setTimeout(() => {
+  //           cb(results);
+  //         }, 1500 * Math.random());
+  //       }
+  //     }
+  //   });
+  // }
+}
+// 远程搜索匹配查询
+function createStateFilter(queryString: string) {
+  return (res: { [x: string]: string }) => {
+    return (
+      res[state.searchMark.prop]
+        .toLowerCase()
+        .indexOf(queryString.toLowerCase()) === 0
+    );
+  };
+}
 
 // 行内表单搜索事件
-async function submitForm () {
+async function submitForm() {
   ruleFormRef.value.validate((prop: {}, isValid: boolean, message: string) => {
     if (isValid) {
-      console.log('submit!')
+      console.log("submit!");
     } else {
-      console.log('error submit!', prop)
+      console.log("error submit!", prop);
     }
-  })
+  });
   emit("submit");
 }
 
 // 清空ruleForm表单事件
-function resetForm () {
-  ruleFormRef.value.resetFields()
+function resetForm() {
+  ruleFormRef.value.resetFields();
 }
 /*
    该watch的作用是遍历表单的数据赋值给表单tempQueryForm对象时,
    遍历对象
 */
-watch(()=>props.formParams, (newValue, oldValue) => {
-  state.tempFormParams = newValue;
-}, { deep: true, immediate: true })
+watch(
+  () => props.formParams,
+  (newValue, oldValue) => {
+    state.tempFormParams = newValue;
+  },
+  { deep: true, immediate: true }
+);
 
-watch(()=>props.formConfig, (newValue, oldValue) => {
-  state.tempFormConfig = deepClone(newValue);
-}, { deep: true, immediate: true })
+watch(
+  () => props.formConfig,
+  (newValue, oldValue) => {
+    state.tempFormConfig = deepClone(newValue);
+  },
+  { deep: true, immediate: true }
+);
 </script>
 <style lang="scss"></style>

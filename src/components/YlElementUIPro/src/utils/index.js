@@ -117,7 +117,7 @@ export function removeDuplicates(arr, keys) {
       map.set(item[duplicate], item);
     }
   }
-  const result = Array.from(map.values());
+  let result = Array.from(map.values());
   // 返回去重结果
   if (typeof keys == "string") return result;
   // 排序
